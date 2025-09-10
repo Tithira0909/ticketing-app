@@ -80,18 +80,21 @@ export default function App() {
 
         .banner-placeholder {
           width: 100%;
-          height: 12rem;
+          aspect-ratio: 9 / 16;
+          height: auto;
+          max-height: 400px; /* Add a max-height to prevent it from becoming too large on desktop */
           border-radius: 0.75rem;
           overflow: hidden;
-          margin-bottom: 1.5rem;
+          margin: 0 auto 1.5rem auto; /* Center the banner */
           border: 2px solid #D4AF37;
           box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+          background-color: #fafafa;
           display: flex;
           align-items: center;
           justify-content: center;
-          background-color: #fafafa;
+          color: #aaa;
+          font-style: italic;
         }
-        @media (min-width: 640px) { .banner-placeholder { height: 16rem; } }
 
         .title {
           font-size: 2.25rem;
@@ -237,8 +240,7 @@ export default function App() {
       <div className="cinematic-card">
         <header className="header">
           <div className="banner-placeholder">
-            {/* Placeholder for Event Banner */}
-            <p className="text-gray-400 text-lg">Event Banner Placeholder</p>
+            <p>Banner Image (9:16)</p>
           </div>
           <h1 className="title">Sanda Ek Dinak</h1>
         </header>
