@@ -89,11 +89,11 @@ export default function App() {
           border: 2px solid #D4AF37;
           box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
           background-color: #fafafa;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #aaa;
-          font-style: italic;
+        }
+        .banner-placeholder img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
 
         .title {
@@ -240,7 +240,7 @@ export default function App() {
       <div className="cinematic-card">
         <header className="header">
           <div className="banner-placeholder">
-            <p>Banner Image (9:16)</p>
+            <img src="/flyer.jpg" alt="Event Banner" />
           </div>
           <h1 className="title">Sanda Ek Dinak</h1>
         </header>
