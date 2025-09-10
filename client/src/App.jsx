@@ -240,7 +240,7 @@ export default function App() {
       <div className="cinematic-card">
         <header className="header">
           <div className="banner-placeholder">
-            <img src="/flyer.jpg" alt="Event Banner" />
+            <img src="/flyer.png" alt="Event Banner" />
           </div>
           <h1 className="title">Sanda Ek Dinak</h1>
         </header>
