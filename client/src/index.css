@@ -1,8 +1,8 @@
 :root {
   --primary: #f6c511;
-  --background: #000;
+  --background: #FFFFFF;
   font-family: 'Poppins', sans-serif;
-  color: #fff;
+  color: #333333;
   background-color: var(--background);
 }
 
@@ -22,7 +22,7 @@ button {
   font-size: 1em;
   cursor: pointer;
   background: var(--primary);
-  color: #000;
+  color: #333333;
   transition: opacity 0.3s;
 }
 button:hover { opacity: 0.8; }
