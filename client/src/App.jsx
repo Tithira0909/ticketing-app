@@ -43,8 +43,8 @@ export default function App() {
         }
         .app-container {
           min-height: 100vh;
-          background: linear-gradient(135deg, #1f2937, #18181b, #000000);
-          color: #f3f4f6;
+          background: #fdfdfd; /* Very light grey */
+          color: #212121; /* Dark grey for text */
           font-family: 'Inter', sans-serif;
           padding: 1rem;
           display: flex;
@@ -52,34 +52,25 @@ export default function App() {
           justify-content: center;
         }
 
+        /* Gold color helper classes - I will remove the teal ones from the JSX */
         .text-gold {
-          color: #FFD700;
-        }
-        .text-teal {
-          color: #00A693;
+          color: #D4AF37;
         }
         .border-gold {
-          border-color: #FFD700;
-        }
-        .border-teal {
-          border-color: #00A693;
+          border-color: #D4AF37;
         }
         .bg-gold {
-          background-color: #FFD700;
-        }
-        .bg-teal {
-          background-color: #00A693;
+          background-color: #D4AF37;
         }
 
         .cinematic-card {
-          background-color: rgba(39, 39, 42, 0.7);
-          backdrop-filter: blur(8px);
+          background-color: #ffffff;
           border-radius: 1.5rem;
           padding: 2.5rem;
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
           max-width: 48rem;
           width: 100%;
-          border: 1px solid #374151;
+          border: 1px solid #f0f0f0;
         }
 
         .header {
@@ -93,74 +84,54 @@ export default function App() {
           border-radius: 0.75rem;
           overflow: hidden;
           margin-bottom: 1.5rem;
-          border: 2px solid #FFD700;
-          box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
+          border: 2px solid #D4AF37;
+          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
+          background-color: #fafafa;
         }
-        @media (min-width: 640px) {
-          .banner-placeholder {
-            height: 16rem;
-          }
-        }
-        
+        @media (min-width: 640px) { .banner-placeholder { height: 16rem; } }
+
         .title {
           font-size: 2.25rem;
           font-weight: 700;
-          color: #FFD700;
-          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+          color: #D4AF37;
+          text-shadow: none;
         }
-        @media (min-width: 768px) {
-          .title {
-            font-size: 3rem;
-          }
-        }
-        
+        @media (min-width: 768px) { .title { font-size: 3rem; } }
+
         .ticket-section {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          background-color: rgba(63, 63, 70, 0.5);
+          background-color: #fff;
           border-radius: 1rem;
           padding: 1rem 1.5rem;
           margin-bottom: 1rem;
-          border: 1px solid;
+          border: 1px solid #eee;
           transition: all 0.3s ease;
         }
         .ticket-section:hover {
-          transform: scale(1.02);
-          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+          transform: translateY(-2px);
+          box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.08);
         }
-        @media (min-width: 640px) {
-          .ticket-section {
-            flex-direction: row;
-          }
-        }
+        @media (min-width: 640px) { .ticket-section { flex-direction: row; } }
 
-        .ticket-info {
-          margin-bottom: 1rem;
-        }
-        @media (min-width: 640px) {
-          .ticket-info {
-            margin-bottom: 0;
-          }
-        }
+        .ticket-info { margin-bottom: 1rem; }
+        @media (min-width: 640px) { .ticket-info { margin-bottom: 0; } }
 
         .ticket-label {
           font-size: 1.125rem;
           font-weight: 600;
+          color: #212121; /* Use default dark text color */
         }
-        @media (min-width: 640px) {
-          .ticket-label {
-            font-size: 1.25rem;
-          }
-        }
-        
+        @media (min-width: 640px) { .ticket-label { font-size: 1.25rem; } }
+
         .ticket-available {
           font-size: 0.875rem;
-          color: #d1d5db;
+          color: #888;
         }
 
         .ticket-controls {
@@ -168,49 +139,46 @@ export default function App() {
           align-items: center;
           gap: 0.75rem;
         }
-        
+
         .control-button {
           width: 2rem;
           height: 2rem;
           border-radius: 9999px;
-          color: white;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 700;
           font-size: 1.25rem;
-          box-shadow: 0 0 5px rgba(255, 215, 0, 0.5), 0 0 10px rgba(0, 166, 147, 0.5);
+          border: none;
           transition: all 0.3s ease;
         }
         .control-button:hover {
-          box-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 25px rgba(0, 166, 147, 0.8);
-          transform: translateY(-2px);
+          transform: translateY(-1px);
         }
-        .control-button.gold {
-          background-color: #FFD700;
-          color: #1f2937;
+
+        /* Make all buttons gold */
+        .control-button.gold, .control-button.teal {
+          background-color: #D4AF37;
+          color: #fff;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        .control-button.gold:hover {
-          background-color: #CCAA00;
-        }
-        .control-button.teal {
-          background-color: #00A693;
-        }
-        .control-button.teal:hover {
-          background-color: #00877C;
+        .control-button.gold:hover, .control-button.teal:hover {
+          background-color: #c8a430;
+          box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
         .ticket-count {
           font-size: 1.25rem;
           font-weight: 700;
-          color: #f3f4f6;
+          color: #212121;
           width: 2rem;
           text-align: center;
         }
-        
+
         .total-section {
-          border-top: 2px solid #374151;
+          border-top: 1px solid #eee;
           padding-top: 1.5rem;
+          margin-top: 1.5rem;
         }
 
         .price-container {
@@ -223,13 +191,13 @@ export default function App() {
         .total-label {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #FFD700;
+          color: #D4AF37;
         }
-        
+
         .total-price {
           font-size: 1.875rem;
           font-weight: 700;
-          color: #00A693;
+          color: #212121;
         }
 
         .book-button {
@@ -239,26 +207,29 @@ export default function App() {
           font-size: 1.25rem;
           font-weight: 700;
           border-radius: 0.75rem;
-          background: linear-gradient(to right, #FFD700, #00A693);
-          color: #1f2937;
-          box-shadow: 0 0 10px #FFD700, 0 0 20px #FFD700;
-          transition: transform 0.3s ease;
+          background: #D4AF37;
+          color: #fff;
+          border: none;
+          box-shadow: 0 4px 15px -5px rgba(212, 175, 55, 0.5);
+          transition: all 0.3s ease;
         }
         .book-button:hover {
-          transform: scale(1.05);
+          transform: scale(1.02);
+          background: #c8a430;
+          box-shadow: 0 6px 20px -5px rgba(212, 175, 55, 0.6);
         }
         .book-button:disabled {
-          background: linear-gradient(to right, #9ca3af, #4b5563);
-          color: #d1d5db;
+          background: #f0f0f0;
+          color: #bbb;
           cursor: not-allowed;
           box-shadow: none;
         }
-        
+
         .footer {
           margin-top: 2rem;
           text-align: center;
           font-size: 0.875rem;
-          color: #9ca3af;
+          color: #aaa;
         }
 
       `}</style>
@@ -274,9 +245,9 @@ export default function App() {
 
         <main>
           {/* Premium Ticket Section */}
-          <div className="ticket-section border-teal">
+          <div className="ticket-section">
             <div className="ticket-info">
-              <h2 className="ticket-label text-gold">{premium.label}</h2>
+              <h2 className="ticket-label">{premium.label}</h2>
               <p className="ticket-available">Available: {premium.max - premiumTickets}</p>
             </div>
             <div className="ticket-controls">
@@ -297,9 +268,9 @@ export default function App() {
           </div>
 
           {/* Standard Ticket Section */}
-          <div className="ticket-section border-gold">
+          <div className="ticket-section">
             <div className="ticket-info">
-              <h2 className="ticket-label text-teal">{standard.label}</h2>
+              <h2 className="ticket-label">{standard.label}</h2>
               <p className="ticket-available">Available: {standard.max - standardTickets}</p>
             </div>
             <div className="ticket-controls">

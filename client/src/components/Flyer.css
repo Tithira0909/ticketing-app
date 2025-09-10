@@ -6,7 +6,7 @@
 .flyer-image {
   width: 100%;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
 }
 
 @keyframes fade-in {

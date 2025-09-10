@@ -10,7 +10,7 @@
 }
 .register button {
   background: var(--primary);
-  color: #000;
+  color: #333333;
 }
 .status {
   margin-top: 1rem;

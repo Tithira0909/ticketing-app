@@ -3,8 +3,9 @@
   justify-content: center;
   gap: 1rem;
   padding: 1rem;
-  background: #111;
+  background: #f8f8f8;
   flex-wrap: wrap;
+  border-bottom: 1px solid #ddd;
 }
 .nav a {
   color: var(--primary);
