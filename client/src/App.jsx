@@ -1,241 +1,204 @@
 import React, { useState, useEffect } from 'react';
+import './App.css';
+
+// Registration Modal Component
+const RegistrationModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  totalPrice,
+  isLoading,
+}) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name || !email || !phone) {
+      alert('Please fill in all fields.');
+      return;
+    }
+    onSubmit({ name, email, phone });
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <header className="modal-header">
+          <h2 className="modal-title">Complete Your Booking</h2>
+          <button className="modal-close-button" onClick={onClose}>
+            &times;
+          </button>
+        </header>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label" htmlFor="name">
+              Full Name
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="form-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="email">
+              Email Address
+            </label>
+            <input
+              id="email"
+              type="email"
+              className="form-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label" htmlFor="phone">
+              Phone Number
+            </label>
+            <input
+              id="phone"
+              type="tel"
+              className="form-input"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Enter your phone number"
+              required
+            />
+          </div>
+          <div className="total-section">
+            <div className="price-container">
+              <p className="total-label">Total to Pay:</p>
+              <p className="total-price">{totalPrice.toLocaleString('en-US')} LKR</p>
+            </div>
+          </div>
+          <div className="form-actions">
+            <button
+              type="submit"
+              className="book-button"
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Confirm & Book'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
 
 // Main App component
 export default function App() {
-  const [premiumTickets, setPremiumTickets] = useState(0);
-  const [standardTickets, setStandardTickets] = useState(0);
+  const [vipTickets, setVipTickets] = useState(0);
+  const [generalTickets, setGeneralTickets] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [bookingStatus, setBookingStatus] = useState(null); // 'success' or 'error'
 
-  // Ticket data
-  const premium = { price: 7500, label: '7500 LKR Tickets', max: 400 };
-  const standard = { price: 5000, label: '5000 LKR Tickets', max: 800 };
+  // Ticket data from the backend schema
+  const vip = { type: 'VIP', price: 7500, label: 'VIP Tickets', max: 400 };
+  const general = { type: 'GENERAL', price: 5000, label: 'General Tickets', max: 800 };
 
   // Recalculate total price whenever ticket counts change
   useEffect(() => {
-    const total = (premiumTickets * premium.price) + (standardTickets * standard.price);
+    const total = vipTickets * vip.price + generalTickets * general.price;
     setTotalPrice(total);
-  }, [premiumTickets, standardTickets]);
+  }, [vipTickets, generalTickets]);
 
   const handleTicketChange = (type, action) => {
-    if (type === 'premium') {
-      if (action === 'increment' && premiumTickets < premium.max) {
-        setPremiumTickets(premiumTickets + 1);
-      } else if (action === 'decrement' && premiumTickets > 0) {
-        setPremiumTickets(premiumTickets - 1);
+    if (type === 'vip') {
+      if (action === 'increment' && vipTickets < vip.max) {
+        setVipTickets(vipTickets + 1);
+      } else if (action === 'decrement' && vipTickets > 0) {
+        setVipTickets(vipTickets - 1);
       }
-    } else if (type === 'standard') {
-      if (action === 'increment' && standardTickets < standard.max) {
-        setStandardTickets(standardTickets + 1);
-      } else if (action === 'decrement' && standardTickets > 0) {
-        setStandardTickets(standardTickets - 1);
+    } else if (type === 'general') {
+      if (action === 'increment' && generalTickets < general.max) {
+        setGeneralTickets(generalTickets + 1);
+      } else if (action === 'decrement' && generalTickets > 0) {
+        setGeneralTickets(generalTickets - 1);
       }
+    }
+  };
+
+  const handleBook = () => {
+    if (totalPrice > 0) {
+      setIsModalOpen(true);
+    }
+  };
+
+  const handleRegistrationSubmit = async (customerDetails) => {
+    setIsLoading(true);
+    setBookingStatus(null);
+    try {
+      // 1. Register the customer
+      const registerRes = await fetch('http://localhost:3000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(customerDetails),
+      });
+
+      if (!registerRes.ok) {
+        throw new Error('Failed to register customer.');
+      }
+
+      const { id: customerId } = await registerRes.json();
+
+      // 2. Book tickets for the new customer
+      const bookings = [];
+      for (let i = 0; i < vipTickets; i++) {
+        bookings.push({ customerId, type: vip.type });
+      }
+      for (let i = 0; i < generalTickets; i++) {
+        bookings.push({ customerId, type: general.type });
+      }
+
+      // Execute all booking promises
+      await Promise.all(
+        bookings.map((booking) =>
+          fetch('http://localhost:3000/api/book', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(booking),
+          }).then((res) => {
+            if (!res.ok) throw new Error('A ticket could not be booked.');
+          })
+        )
+      );
+
+      setBookingStatus('success');
+      // Reset selections after successful booking
+      setVipTickets(0);
+      setGeneralTickets(0);
+    } catch (error) {
+      console.error('Booking failed:', error);
+      setBookingStatus('error');
+    } finally {
+      setIsLoading(false);
+      setIsModalOpen(false); // Close modal on success or error
     }
   };
 
   return (
     <div className="app-container">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
-        body {
-          font-family: 'Inter', sans-serif;
-          margin: 0;
-          padding: 0;
-        }
-        .app-container {
-          min-height: 100vh;
-          background: #fdfdfd; /* Very light grey */
-          color: #212121; /* Dark grey for text */
-          font-family: 'Inter', sans-serif;
-          padding: 1rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        /* Gold color helper classes - I will remove the teal ones from the JSX */
-        .text-gold {
-          color: #D4AF37;
-        }
-        .border-gold {
-          border-color: #D4AF37;
-        }
-        .bg-gold {
-          background-color: #D4AF37;
-        }
-
-        .cinematic-card {
-          background-color: #ffffff;
-          border-radius: 1.5rem;
-          padding: 2.5rem;
-          box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
-          max-width: 48rem;
-          width: 100%;
-          border: 1px solid #f0f0f0;
-        }
-
-        .header {
-          margin-bottom: 2rem;
-          text-align: center;
-        }
-
-        .banner-placeholder {
-          width: 100%;
-          aspect-ratio: 9 / 16;
-          height: auto;
-          max-height: 400px; /* Add a max-height to prevent it from becoming too large on desktop */
-          border-radius: 0.75rem;
-          overflow: hidden;
-          margin: 0 auto 1.5rem auto; /* Center the banner */
-          border: 2px solid #D4AF37;
-          box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-          background-color: #fafafa;
-        }
-        .banner-placeholder img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .title {
-          font-size: 2.25rem;
-          font-weight: 700;
-          color: #D4AF37;
-          text-shadow: none;
-        }
-        @media (min-width: 768px) { .title { font-size: 3rem; } }
-
-        .ticket-section {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: space-between;
-          background-color: #fff;
-          border-radius: 1rem;
-          padding: 1rem 1.5rem;
-          margin-bottom: 1rem;
-          border: 1px solid #eee;
-          transition: all 0.3s ease;
-        }
-        .ticket-section:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 5px 15px -5px rgba(0, 0, 0, 0.08);
-        }
-        @media (min-width: 640px) { .ticket-section { flex-direction: row; } }
-
-        .ticket-info { margin-bottom: 1rem; }
-        @media (min-width: 640px) { .ticket-info { margin-bottom: 0; } }
-
-        .ticket-label {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: #212121; /* Use default dark text color */
-        }
-        @media (min-width: 640px) { .ticket-label { font-size: 1.25rem; } }
-
-        .ticket-available {
-          font-size: 0.875rem;
-          color: #888;
-        }
-
-        .ticket-controls {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-        }
-
-        .control-button {
-          width: 2rem;
-          height: 2rem;
-          border-radius: 9999px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-weight: 700;
-          font-size: 1.25rem;
-          border: none;
-          transition: all 0.3s ease;
-        }
-        .control-button:hover {
-          transform: translateY(-1px);
-        }
-
-        /* Make all buttons gold */
-        .control-button.gold, .control-button.teal {
-          background-color: #D4AF37;
-          color: #fff;
-          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .control-button.gold:hover, .control-button.teal:hover {
-          background-color: #c8a430;
-          box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .ticket-count {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #212121;
-          width: 2rem;
-          text-align: center;
-        }
-
-        .total-section {
-          border-top: 1px solid #eee;
-          padding-top: 1.5rem;
-          margin-top: 1.5rem;
-        }
-
-        .price-container {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1.5rem;
-        }
-
-        .total-label {
-          font-size: 1.5rem;
-          font-weight: 700;
-          color: #D4AF37;
-        }
-
-        .total-price {
-          font-size: 1.875rem;
-          font-weight: 700;
-          color: #212121;
-        }
-
-        .book-button {
-          width: 100%;
-          padding: 1rem;
-          text-align: center;
-          font-size: 1.25rem;
-          font-weight: 700;
-          border-radius: 0.75rem;
-          background: #D4AF37;
-          color: #fff;
-          border: none;
-          box-shadow: 0 4px 15px -5px rgba(212, 175, 55, 0.5);
-          transition: all 0.3s ease;
-        }
-        .book-button:hover {
-          transform: scale(1.02);
-          background: #c8a430;
-          box-shadow: 0 6px 20px -5px rgba(212, 175, 55, 0.6);
-        }
-        .book-button:disabled {
-          background: #f0f0f0;
-          color: #bbb;
-          cursor: not-allowed;
-          box-shadow: none;
-        }
-
-        .footer {
-          margin-top: 2rem;
-          text-align: center;
-          font-size: 0.875rem;
-          color: #aaa;
-        }
-
-      `}</style>
+      <RegistrationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleRegistrationSubmit}
+        totalPrice={totalPrice}
+        isLoading={isLoading}
+      />
 
       <div className="cinematic-card">
         <header className="header">
@@ -246,46 +209,57 @@ export default function App() {
         </header>
 
         <main>
-          {/* Premium Ticket Section */}
+          {bookingStatus === 'success' && (
+            <div className="alert-success">
+              Your booking was successful! A confirmation has been sent to your email.
+            </div>
+          )}
+          {bookingStatus === 'error' && (
+            <div className="alert-error">
+              There was an error with your booking. Please try again.
+            </div>
+          )}
+
+          {/* VIP Ticket Section */}
           <div className="ticket-section">
             <div className="ticket-info">
-              <h2 className="ticket-label">{premium.label}</h2>
-              <p className="ticket-available">Available: {premium.max - premiumTickets}</p>
+              <h2 className="ticket-label">{vip.label}</h2>
+              <p className="ticket-available">Available: {vip.max - vipTickets}</p>
             </div>
             <div className="ticket-controls">
               <button
-                onClick={() => handleTicketChange('premium', 'decrement')}
-                className="control-button teal"
+                onClick={() => handleTicketChange('vip', 'decrement')}
+                className="control-button"
               >
                 -
               </button>
-              <span className="ticket-count">{premiumTickets}</span>
+              <span className="ticket-count">{vipTickets}</span>
               <button
-                onClick={() => handleTicketChange('premium', 'increment')}
-                className="control-button teal"
+                onClick={() => handleTicketChange('vip', 'increment')}
+                className="control-button"
               >
                 +
               </button>
             </div>
           </div>
 
-          {/* Standard Ticket Section */}
+          {/* General Ticket Section */}
           <div className="ticket-section">
             <div className="ticket-info">
-              <h2 className="ticket-label">{standard.label}</h2>
-              <p className="ticket-available">Available: {standard.max - standardTickets}</p>
+              <h2 className="ticket-label">{general.label}</h2>
+              <p className="ticket-available">Available: {general.max - generalTickets}</p>
             </div>
             <div className="ticket-controls">
               <button
-                onClick={() => handleTicketChange('standard', 'decrement')}
-                className="control-button gold"
+                onClick={() => handleTicketChange('general', 'decrement')}
+                className="control-button"
               >
                 -
               </button>
-              <span className="ticket-count">{standardTickets}</span>
+              <span className="ticket-count">{generalTickets}</span>
               <button
-                onClick={() => handleTicketChange('standard', 'increment')}
-                className="control-button gold"
+                onClick={() => handleTicketChange('general', 'increment')}
+                className="control-button"
               >
                 +
               </button>
@@ -302,6 +276,7 @@ export default function App() {
           <button
             className="book-button"
             disabled={totalPrice === 0}
+            onClick={handleBook}
           >
             Book Tickets
           </button>
