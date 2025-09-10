@@ -1,0 +1,15 @@
+.booking {
+  margin: 2rem auto;
+  text-align: center;
+}
+.booking select {
+  padding: 0.5rem;
+  margin-right: 1rem;
+}
+.booking button {
+  background: var(--primary);
+  color: #000;
+}
+.status {
+  margin-top: 1rem;
+}
