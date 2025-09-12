@@ -11,7 +11,9 @@ body {
 .app-container {
   min-height: 100vh;
   padding: 1rem;
-  /* Centering is now handled by the ThreeDScene component */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Gold color helper classes */
@@ -28,15 +30,13 @@ body {
 }
 
 .cinematic-card {
-  /* The background is now part of the 3D scene, so we make this transparent */
-  background-color: transparent;
+  background-color: #ffffff;
   border-radius: 1.5rem;
   padding: 2.5rem;
-  /* Shadow is handled by the 3D effect */
-  box-shadow: none;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
   max-width: 48rem;
   width: 100%;
-  border: none;
+  border: 1px solid #f0f0f0;
 }
 
 .header {
@@ -286,6 +286,7 @@ body {
   border-radius: 0.5rem;
   font-size: 1rem;
   transition: border-color 0.3s ease;
+  box-sizing: border-box; /* Ensures padding is included in the total width */
 }
 
 .form-input:focus {

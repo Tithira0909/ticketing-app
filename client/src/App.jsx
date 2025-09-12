@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import { ThreeDScene } from './components/ThreeDCard';
 
-// Registration Modal Component (remains the same)
+// Registration Modal Component
 const RegistrationModal = ({
   isOpen,
   onClose,
@@ -98,7 +97,6 @@ const RegistrationModal = ({
   );
 };
 
-
 // Main App component
 export default function App() {
   const [vipTickets, setVipTickets] = useState(0);
@@ -108,9 +106,11 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [bookingStatus, setBookingStatus] = useState(null); // 'success' or 'error'
 
+  // Ticket data from the backend schema
   const vip = { type: 'VIP', price: 7500, label: 'VIP Tickets', max: 400 };
   const general = { type: 'GENERAL', price: 5000, label: 'General Tickets', max: 800 };
 
+  // Recalculate total price whenever ticket counts change
   useEffect(() => {
     const total = vipTickets * vip.price + generalTickets * general.price;
     setTotalPrice(total);
@@ -142,15 +142,20 @@ export default function App() {
     setIsLoading(true);
     setBookingStatus(null);
     try {
+      // 1. Register the customer
       const registerRes = await fetch('http://localhost:3000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(customerDetails),
       });
-      if (!registerRes.ok) throw new Error('Failed to register customer.');
+
+      if (!registerRes.ok) {
+        throw new Error('Failed to register customer.');
+      }
 
       const { id: customerId } = await registerRes.json();
 
+      // 2. Book tickets for the new customer
       const bookings = [];
       for (let i = 0; i < vipTickets; i++) {
         bookings.push({ customerId, type: vip.type });
@@ -159,6 +164,7 @@ export default function App() {
         bookings.push({ customerId, type: general.type });
       }
 
+      // Execute all booking promises
       await Promise.all(
         bookings.map((booking) =>
           fetch('http://localhost:3000/api/book', {
@@ -172,6 +178,7 @@ export default function App() {
       );
 
       setBookingStatus('success');
+      // Reset selections after successful booking
       setVipTickets(0);
       setGeneralTickets(0);
     } catch (error) {
@@ -179,7 +186,7 @@ export default function App() {
       setBookingStatus('error');
     } finally {
       setIsLoading(false);
-      setIsModalOpen(false);
+      setIsModalOpen(false); // Close modal on success or error
     }
   };
 
@@ -193,67 +200,92 @@ export default function App() {
         isLoading={isLoading}
       />
 
-      <ThreeDScene>
-        <div className="cinematic-card">
-          <header className="header">
-            <div className="banner-placeholder">
-              <img src="/flyer.png" alt="Event Banner" />
-            </div>
-            <h1 className="title">Sanda Ek Dinak</h1>
-          </header>
+      <div className="cinematic-card">
+        <header className="header">
+          <div className="banner-placeholder">
+            <img src="/flyer.png" alt="Event Banner" />
+          </div>
+          <h1 className="title">Sanda Ek Dinak</h1>
+        </header>
 
-          <main>
-            {bookingStatus === 'success' && (
-              <div className="alert-success">
-                Your booking was successful! A confirmation has been sent to your email.
-              </div>
-            )}
-            {bookingStatus === 'error' && (
-              <div className="alert-error">
-                There was an error with your booking. Please try again.
-              </div>
-            )}
-
-            <div className="ticket-section">
-              <div className="ticket-info">
-                <h2 className="ticket-label">{vip.label}</h2>
-                <p className="ticket-available">Available: {vip.max - vipTickets}</p>
-              </div>
-              <div className="ticket-controls">
-                <button onClick={() => handleTicketChange('vip', 'decrement')} className="control-button">-</button>
-                <span className="ticket-count">{vipTickets}</span>
-                <button onClick={() => handleTicketChange('vip', 'increment')} className="control-button">+</button>
-              </div>
+        <main>
+          {bookingStatus === 'success' && (
+            <div className="alert-success">
+              Your booking was successful! A confirmation has been sent to your email.
             </div>
-
-            <div className="ticket-section">
-              <div className="ticket-info">
-                <h2 className="ticket-label">{general.label}</h2>
-                <p className="ticket-available">Available: {general.max - generalTickets}</p>
-              </div>
-              <div className="ticket-controls">
-                <button onClick={() => handleTicketChange('general', 'decrement')} className="control-button">-</button>
-                <span className="ticket-count">{generalTickets}</span>
-                <button onClick={() => handleTicketChange('general', 'increment')} className="control-button">+</button>
-              </div>
+          )}
+          {bookingStatus === 'error' && (
+            <div className="alert-error">
+              There was an error with your booking. Please try again.
             </div>
-          </main>
+          )}
 
-          <div className="total-section">
-            <div className="price-container">
-              <p className="total-label">Total Price:</p>
-              <p className="total-price">{totalPrice.toLocaleString('en-US')} LKR</p>
+          {/* VIP Ticket Section */}
+          <div className="ticket-section">
+            <div className="ticket-info">
+              <h2 className="ticket-label">{vip.label}</h2>
+              <p className="ticket-available">Available: {vip.max - vipTickets}</p>
             </div>
-            <button className="book-button" disabled={totalPrice === 0} onClick={handleBook}>
-              Book Tickets
-            </button>
+            <div className="ticket-controls">
+              <button
+                onClick={() => handleTicketChange('vip', 'decrement')}
+                className="control-button"
+              >
+                -
+              </button>
+              <span className="ticket-count">{vipTickets}</span>
+              <button
+                onClick={() => handleTicketChange('vip', 'increment')}
+                className="control-button"
+              >
+                +
+              </button>
+            </div>
           </div>
 
-          <footer className="footer">
-            <p>by Eventz One</p>
-          </footer>
+          {/* General Ticket Section */}
+          <div className="ticket-section">
+            <div className="ticket-info">
+              <h2 className="ticket-label">{general.label}</h2>
+              <p className="ticket-available">Available: {general.max - generalTickets}</p>
+            </div>
+            <div className="ticket-controls">
+              <button
+                onClick={() => handleTicketChange('general', 'decrement')}
+                className="control-button"
+              >
+                -
+              </button>
+              <span className="ticket-count">{generalTickets}</span>
+              <button
+                onClick={() => handleTicketChange('general', 'increment')}
+                className="control-button"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        </main>
+
+        {/* Total and Book Button */}
+        <div className="total-section">
+          <div className="price-container">
+            <p className="total-label">Total Price:</p>
+            <p className="total-price">{totalPrice.toLocaleString('en-US')} LKR</p>
+          </div>
+          <button
+            className="book-button"
+            disabled={totalPrice === 0}
+            onClick={handleBook}
+          >
+            Book Tickets
+          </button>
         </div>
-      </ThreeDScene>
+
+        <footer className="footer">
+          <p>by Eventz One</p>
+        </footer>
+      </div>
     </div>
   );
 }
