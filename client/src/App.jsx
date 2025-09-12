@@ -112,7 +112,7 @@ export default function App() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsAppLoading(false);
-    }, 3000); // Simulate a 3-second load time
+    }, 2000); // Simulate a 2-second load time
     return () => clearTimeout(timer);
   }, []);
 
@@ -191,7 +191,8 @@ export default function App() {
     }
   };
 
-  const toggleDescription = () => {
+  const toggleDescription = (e) => {
+    e.preventDefault();
     setIsDescriptionExpanded(!isDescriptionExpanded);
   };
 

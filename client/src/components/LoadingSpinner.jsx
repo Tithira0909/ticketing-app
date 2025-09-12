@@ -2,11 +2,14 @@ import React from 'react';
 import './LoadingSpinner.css';
 
 const GramophoneIcon = () => (
-  <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M75 25L25 37.5V75H75V25Z" stroke="white" strokeWidth="4"/>
-    <path d="M25 50H75" stroke="white" strokeWidth="4"/>
-    <path d="M50 75V25" stroke="white" strokeWidth="4"/>
-    <circle cx="50" cy="50" r="10" fill="white"/>
+  <svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 120H120V130H30V120Z" fill="#5A3E36"/>
+    <path d="M35 90H115V120H35V90Z" fill="#A0522D"/>
+    <path d="M40 95H110V115H40V95Z" fill="#8B4513"/>
+    <circle cx="75" cy="75" r="30" fill="#CD853F"/>
+    <circle cx="75" cy="75" r="10" fill="#2F4F4F"/>
+    <path d="M75 45L110 20L120 25L85 50L75 45Z" fill="#D2B48C"/>
+    <path d="M110 20L130 30L135 20L115 10L110 20Z" fill="#C0C0C0"/>
   </svg>
 );
 
