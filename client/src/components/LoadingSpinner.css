@@ -1,0 +1,47 @@
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: var(--background-color);
+}
+
+.gramophone {
+  position: relative;
+}
+
+.notes {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.note {
+  position: absolute;
+  opacity: 0;
+  animation: float-up 2s infinite;
+}
+
+.n1 {
+  animation-delay: 0s;
+}
+
+.n2 {
+  animation-delay: 0.5s;
+}
+
+.n3 {
+  animation-delay: 1s;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) scale(1.5);
+    opacity: 0;
+  }
+}

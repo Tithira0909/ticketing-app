@@ -342,3 +342,14 @@ body {
   color: #f8d7da;
   border: 1px solid #f5c6cb;
 }
+
+.copyright-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
+.copyright-footer p {
+  font-size: 0.8rem;
+  color: var(--text-secondary-color);
+  margin: 0;
+}
