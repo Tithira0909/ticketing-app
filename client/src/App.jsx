@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Registration Modal Component
+// Registration Modal Component (kept from original)
 const RegistrationModal = ({
   isOpen,
   onClose,
@@ -97,20 +97,18 @@ const RegistrationModal = ({
   );
 };
 
-// Main App component
+
 export default function App() {
   const [vipTickets, setVipTickets] = useState(0);
   const [generalTickets, setGeneralTickets] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState(null); // 'success' or 'error'
+  const [bookingStatus, setBookingStatus] = useState(null);
 
-  // Ticket data from the backend schema
   const vip = { type: 'VIP', price: 7500, label: 'VIP Tickets', max: 400 };
   const general = { type: 'GENERAL', price: 5000, label: 'General Tickets', max: 800 };
 
-  // Recalculate total price whenever ticket counts change
   useEffect(() => {
     const total = vipTickets * vip.price + generalTickets * general.price;
     setTotalPrice(total);
@@ -142,20 +140,15 @@ export default function App() {
     setIsLoading(true);
     setBookingStatus(null);
     try {
-      // 1. Register the customer
       const registerRes = await fetch('http://localhost:3000/api/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(customerDetails),
       });
 
-      if (!registerRes.ok) {
-        throw new Error('Failed to register customer.');
-      }
+      if (!registerRes.ok) throw new Error('Failed to register customer.');
 
       const { id: customerId } = await registerRes.json();
-
-      // 2. Book tickets for the new customer
       const bookings = [];
       for (let i = 0; i < vipTickets; i++) {
         bookings.push({ customerId, type: vip.type });
@@ -164,7 +157,6 @@ export default function App() {
         bookings.push({ customerId, type: general.type });
       }
 
-      // Execute all booking promises
       await Promise.all(
         bookings.map((booking) =>
           fetch('http://localhost:3000/api/book', {
@@ -178,7 +170,6 @@ export default function App() {
       );
 
       setBookingStatus('success');
-      // Reset selections after successful booking
       setVipTickets(0);
       setGeneralTickets(0);
     } catch (error) {
@@ -186,7 +177,7 @@ export default function App() {
       setBookingStatus('error');
     } finally {
       setIsLoading(false);
-      setIsModalOpen(false); // Close modal on success or error
+      setIsModalOpen(false);
     }
   };
 
@@ -200,90 +191,93 @@ export default function App() {
         isLoading={isLoading}
       />
 
-      <div className="cinematic-card">
-        <header className="header">
-          <div className="banner-placeholder">
-            <img src="/flyer.png" alt="Event Banner" />
+      <div className="event-card">
+        <header className="event-header">
+          <img src="/flyer.png" alt="Event Banner" className="event-banner" />
+          <div className="header-overlay">
+            <div className="header-top">
+              <button className="icon-button">&larr;</button>
+              <button className="icon-button">&hearts;</button>
+            </div>
+            <h1 className="event-title">Sanda Ek Dinak</h1>
           </div>
-          <h1 className="title">Sanda Ek Dinak</h1>
         </header>
 
-        <main>
+        <main className="event-details">
           {bookingStatus === 'success' && (
             <div className="alert-success">
-              Your booking was successful! A confirmation has been sent to your email.
+              Booking successful! Check your email.
             </div>
           )}
           {bookingStatus === 'error' && (
             <div className="alert-error">
-              There was an error with your booking. Please try again.
+              Booking failed. Please try again.
             </div>
           )}
 
-          {/* VIP Ticket Section */}
-          <div className="ticket-section">
-            <div className="ticket-info">
-              <h2 className="ticket-label">{vip.label}</h2>
-              <p className="ticket-available">Available: {vip.max - vipTickets}</p>
+          <div className="info-section">
+             <div className="info-item">
+              <span className="info-icon">🗓️</span>
+              <div className="info-text">
+                <p>25 - 26 July, 2021</p>
+              </div>
             </div>
-            <div className="ticket-controls">
-              <button
-                onClick={() => handleTicketChange('vip', 'decrement')}
-                className="control-button"
-              >
-                -
-              </button>
-              <span className="ticket-count">{vipTickets}</span>
-              <button
-                onClick={() => handleTicketChange('vip', 'increment')}
-                className="control-button"
-              >
-                +
-              </button>
+            <div className="info-item">
+              <span className="info-icon">🕔</span>
+              <div className="info-text">
+                <p>4pm - 12pm</p>
+              </div>
             </div>
           </div>
 
-          {/* General Ticket Section */}
-          <div className="ticket-section">
-            <div className="ticket-info">
-              <h2 className="ticket-label">{general.label}</h2>
-              <p className="ticket-available">Available: {general.max - generalTickets}</p>
+          <div className="description-section">
+            <h2 className="section-title">Description</h2>
+            <p className="description-text">
+              Electronic music festival held in Belgium. Tomorrowland was first held in 2005 and has since become one of the world's largest and most notable music festivals.
+              <a href="#" className="read-more"> Read more</a>
+            </p>
+          </div>
+
+          {/* Ticket Selection */}
+          <div className="ticket-selection-section">
+            <h2 className="section-title">Select Tickets</h2>
+            <div className="ticket-option">
+              <div className="ticket-info">
+                <h3 className="ticket-type">{vip.label}</h3>
+                <p className="ticket-price">{vip.price} LKR</p>
+              </div>
+              <div className="ticket-controls">
+                <button onClick={() => handleTicketChange('vip', 'decrement')} className="control-button">-</button>
+                <span className="ticket-count">{vipTickets}</span>
+                <button onClick={() => handleTicketChange('vip', 'increment')} className="control-button">+</button>
+              </div>
             </div>
-            <div className="ticket-controls">
-              <button
-                onClick={() => handleTicketChange('general', 'decrement')}
-                className="control-button"
-              >
-                -
-              </button>
-              <span className="ticket-count">{generalTickets}</span>
-              <button
-                onClick={() => handleTicketChange('general', 'increment')}
-                className="control-button"
-              >
-                +
-              </button>
+            <div className="ticket-option">
+              <div className="ticket-info">
+                <h3 className="ticket-type">{general.label}</h3>
+                <p className="ticket-price">{general.price} LKR</p>
+              </div>
+              <div className="ticket-controls">
+                <button onClick={() => handleTicketChange('general', 'decrement')} className="control-button">-</button>
+                <span className="ticket-count">{generalTickets}</span>
+                <button onClick={() => handleTicketChange('general', 'increment')} className="control-button">+</button>
+              </div>
             </div>
           </div>
         </main>
 
-        {/* Total and Book Button */}
-        <div className="total-section">
-          <div className="price-container">
-            <p className="total-label">Total Price:</p>
-            <p className="total-price">{totalPrice.toLocaleString('en-US')} LKR</p>
+        <footer className="event-footer">
+          <div className="total-display">
+            <p className="total-text">Total:</p>
+            <p className="total-amount">{totalPrice.toLocaleString('en-US')} LKR</p>
           </div>
           <button
-            className="book-button"
-            disabled={totalPrice === 0}
+            className="buy-button"
             onClick={handleBook}
+            disabled={totalPrice === 0}
           >
-            Book Tickets
+            Book Now
           </button>
-        </div>
-
-        <footer className="footer">
-          <p>by Eventz One</p>
         </footer>
       </div>
     </div>
