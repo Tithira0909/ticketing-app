@@ -11,9 +11,7 @@ body {
 .app-container {
   min-height: 100vh;
   padding: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Centering is now handled by the ThreeDScene component */
 }
 
 /* Gold color helper classes */
@@ -30,13 +28,15 @@ body {
 }
 
 .cinematic-card {
-  background-color: #ffffff;
+  /* The background is now part of the 3D scene, so we make this transparent */
+  background-color: transparent;
   border-radius: 1.5rem;
   padding: 2.5rem;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
+  /* Shadow is handled by the 3D effect */
+  box-shadow: none;
   max-width: 48rem;
   width: 100%;
-  border: 1px solid #f0f0f0;
+  border: none;
 }
 
 .header {
@@ -238,7 +238,7 @@ body {
 
 .modal-content {
   background: #fff;
-  padding: 2.5rem;
+  padding: 2.5rem 2.5rem; /* Explicitly set vertical and horizontal padding */
   border-radius: 1.5rem;
   width: 90%;
   max-width: 32rem;
